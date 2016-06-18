@@ -1,4 +1,41 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
+
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.3'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.6'
+    }
+}
+
+ext {
+    bintrayRepo = 'maven'
+    bintrayName = 'compressor'
+
+    publishedGroupId = 'id.zelory'
+    libraryName = 'Compressor'
+    artifact = 'compressor'
+
+    libraryDescription = 'An android image compressor library'
+
+    siteUrl = 'https://github.com/zetbaitsu/Compressor'
+    gitUrl = 'https://github.com/zetbaitsu/Compressor.git'
+
+    libraryVersion = '1.0.0'
+
+    developerId = 'zetbaitsu'
+    developerName = 'Zetra'
+    developerEmail = 'zetra@mail.ugm.ac.id'
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+}
 
 android {
     compileSdkVersion 24
@@ -8,7 +45,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 24
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.0"
     }
     buildTypes {
         release {
@@ -17,6 +54,9 @@ android {
         }
     }
 }
+
+apply from: 'https://raw.githubusercontent.com/zetbaitsu/JCenter/master/installv1.gradle'
+apply from: 'https://raw.githubusercontent.com/zetbaitsu/JCenter/master/bintrayv1.gradle'
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
