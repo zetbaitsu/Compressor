@@ -19,12 +19,6 @@ android {
     }
 }
 
-repositories {
-    maven {
-        url "http://dl.bintray.com/zetbaitsu/maven"
-    }
-}
-
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
