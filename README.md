@@ -6,7 +6,7 @@ Compressor is a lightweight and powerful android image compression library. Comp
 # Gradle
 ```groovy
 dependencies {
-    compile 'id.zelory:compressor:1.0.0'
+    compile 'id.zelory:compressor:1.0.1'
 }
 ```
 # Let's compress the image size!
@@ -21,14 +21,32 @@ compressedImageBitmap = Compressor.getDefault(this).compressToBitmap(actualImage
 ### I want custom Compressor!
 ```java
 compressedImage = new Compressor.Builder(this)
-                    .setMaxWidth(640)
-                    .setMaxHeight(480)
-                    .setQuality(75)
-                    .setCompressFormat(Bitmap.CompressFormat.WEBP)
-                    .setDestinationDirectoryPath(Environment.getExternalStoragePublicDirectory(
-                      Environment.DIRECTORY_PICTURES).getAbsolutePath())
-                    .build()
-                    .compressToFile(actualImage);
+            .setMaxWidth(640)
+            .setMaxHeight(480)
+            .setQuality(75)
+            .setCompressFormat(Bitmap.CompressFormat.WEBP)
+            .setDestinationDirectoryPath(Environment.getExternalStoragePublicDirectory(
+              Environment.DIRECTORY_PICTURES).getAbsolutePath())
+            .build()
+            .compressToFile(actualImage);
+```
+### Stay cool compress image asynchronously with RxJava!
+```java
+Compressor.getDefault(this)
+        .compressToFileAsObservable(actualImage)
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(new Action1<File>() {
+            @Override
+            public void call(File file) {
+                compressedImage = file;
+            }
+        }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+                showError(throwable.getMessage());
+            }
+        });
 ```
 
 License
