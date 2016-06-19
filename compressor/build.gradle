@@ -61,4 +61,5 @@ apply from: 'https://raw.githubusercontent.com/zetbaitsu/JCenter/master/bintrayv
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
+    compile 'io.reactivex:rxjava:1.1.6'
 }

@@ -20,6 +20,9 @@ import java.util.Random;
 
 import id.zelory.compressor.Compressor;
 import id.zelory.compressor.FileUtil;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
     private static final int PICK_IMAGE_REQUEST = 1;
@@ -54,10 +57,31 @@ public class MainActivity extends AppCompatActivity {
         if (actualImage == null) {
             showError("Please choose an image!");
         } else {
-            compressedImage = Compressor.getDefault(this).compressToFile(actualImage);
-            setCompressedImage();
 
+            // Compress image in main thread
+            //compressedImage = Compressor.getDefault(this).compressToFile(actualImage);
+            //setCompressedImage();
+
+            // Compress image to bitmap in main thread
             /*compressedImageView.setImageBitmap(Compressor.getDefault(this).compressToBitmap(actualImage));*/
+
+            // Compress image using RxJava in background thread
+            Compressor.getDefault(this)
+                    .compressToFileAsObservable(actualImage)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Action1<File>() {
+                        @Override
+                        public void call(File file) {
+                            compressedImage = file;
+                            setCompressedImage();
+                        }
+                    }, new Action1<Throwable>() {
+                        @Override
+                        public void call(Throwable throwable) {
+                            showError(throwable.getMessage());
+                        }
+                    });
         }
     }
 
@@ -65,15 +89,42 @@ public class MainActivity extends AppCompatActivity {
         if (actualImage == null) {
             showError("Please choose an image!");
         } else {
+            // Compress image in main thread using custom Compressor
             compressedImage = new Compressor.Builder(this)
                     .setMaxWidth(640)
                     .setMaxHeight(480)
                     .setQuality(75)
                     .setCompressFormat(Bitmap.CompressFormat.WEBP)
-                    .setDestinationDirectoryPath(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath())
+                    .setDestinationDirectoryPath(Environment.getExternalStoragePublicDirectory(
+                            Environment.DIRECTORY_PICTURES).getAbsolutePath())
                     .build()
                     .compressToFile(actualImage);
             setCompressedImage();
+
+            // Compress image using RxJava in background thread with custom Compressor
+           /* new Compressor.Builder(this)
+                    .setMaxWidth(640)
+                    .setMaxHeight(480)
+                    .setQuality(75)
+                    .setCompressFormat(Bitmap.CompressFormat.WEBP)
+                    .setDestinationDirectoryPath(Environment.getExternalStoragePublicDirectory(
+                            Environment.DIRECTORY_PICTURES).getAbsolutePath())
+                    .build()
+                    .compressToFileAsObservable(actualImage)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Action1<File>() {
+                        @Override
+                        public void call(File file) {
+                            compressedImage = file;
+                            setCompressedImage();
+                        }
+                    }, new Action1<Throwable>() {
+                        @Override
+                        public void call(Throwable throwable) {
+                            showError(throwable.getMessage());
+                        }
+                    });*/
         }
     }
 
