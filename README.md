@@ -5,12 +5,6 @@ Compressor is a lightweight and powerful android image compression library. Comp
 
 # Gradle
 ```groovy
-repositories {
-    maven {
-        url "http://dl.bintray.com/zetbaitsu/maven"
-    }
-}
-
 dependencies {
     compile 'id.zelory:compressor:1.0.0'
 }
