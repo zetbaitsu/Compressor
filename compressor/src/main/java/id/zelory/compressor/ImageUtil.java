@@ -42,7 +42,7 @@ class ImageUtil {
         int actualHeight = options.outHeight;
         int actualWidth = options.outWidth;
 
-        float imgRatio = actualWidth / actualHeight;
+        float imgRatio = (float)actualWidth / actualHeight;
         float maxRatio = maxWidth / maxHeight;
 
         //width and height values are set maintaining the aspect ratio of the image
