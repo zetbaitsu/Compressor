@@ -18,7 +18,7 @@ import rx.functions.Func0;
  * LinkedIn   : https://id.linkedin.com/in/zetbaitsu
  */
 public class Compressor {
-    private static Compressor INSTANCE;
+    private static volatile Compressor INSTANCE;
     private Context context;
     //max width and height values of the compressed image is taken as 612x816
     private float maxWidth = 612.0f;
@@ -34,7 +34,11 @@ public class Compressor {
 
     public static Compressor getDefault(Context context) {
         if (INSTANCE == null) {
-            INSTANCE = new Compressor(context);
+            synchronized (Compressor.class) {
+                if (INSTANCE == null) {
+                    INSTANCE = new Compressor(context);
+                }
+            }
         }
         return INSTANCE;
     }
