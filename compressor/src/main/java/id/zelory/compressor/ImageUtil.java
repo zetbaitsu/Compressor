@@ -10,9 +10,11 @@ import android.media.ExifInterface;
 import android.net.Uri;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Created on : June 18, 2016
@@ -38,6 +40,19 @@ class ImageUtil {
         //you try the use the bitmap here, you will get null.
         options.inJustDecodeBounds = true;
         Bitmap bmp = BitmapFactory.decodeFile(filePath, options);
+        if (bmp == null) {
+
+            InputStream inputStream = null;
+            try {
+                inputStream = new FileInputStream(filePath);
+                BitmapFactory.decodeStream(inputStream, null, options);
+                inputStream.close();
+            } catch (FileNotFoundException exception) {
+                exception.printStackTrace();
+            } catch (IOException exception) {
+                exception.printStackTrace();
+            }
+        }
 
         int actualHeight = options.outHeight;
         int actualWidth = options.outWidth;
@@ -74,6 +89,19 @@ class ImageUtil {
         try {
             //load the bitmap from its path
             bmp = BitmapFactory.decodeFile(filePath, options);
+            if (bmp == null) {
+
+                InputStream inputStream = null;
+                try {
+                    inputStream = new FileInputStream(filePath);
+                    BitmapFactory.decodeStream(inputStream, null, options);
+                    inputStream.close();
+                } catch (FileNotFoundException exception) {
+                    exception.printStackTrace();
+                } catch (IOException exception) {
+                    exception.printStackTrace();
+                }
+            }
         } catch (OutOfMemoryError exception) {
             exception.printStackTrace();
         }
