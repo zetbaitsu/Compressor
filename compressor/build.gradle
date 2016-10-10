@@ -26,7 +26,7 @@ ext {
     siteUrl = 'https://github.com/zetbaitsu/Compressor'
     gitUrl = 'https://github.com/zetbaitsu/Compressor.git'
 
-    libraryVersion = '1.0.2'
+    libraryVersion = '1.0.3'
 
     developerId = 'zetbaitsu'
     developerName = 'Zetra'
@@ -45,7 +45,7 @@ android {
         minSdkVersion 9
         targetSdkVersion 24
         versionCode 3
-        versionName "1.0.2"
+        versionName "1.0.3"
     }
     buildTypes {
         release {
