@@ -24,6 +24,7 @@ public class Compressor {
     private float maxWidth = 612.0f;
     private float maxHeight = 816.0f;
     private Bitmap.CompressFormat compressFormat = Bitmap.CompressFormat.JPEG;
+    private Bitmap.Config bitmapConfig = Bitmap.Config.ARGB_8888;
     private int quality = 80;
     private String destinationDirectoryPath;
 
@@ -44,11 +45,11 @@ public class Compressor {
     }
 
     public File compressToFile(File file) {
-        return ImageUtil.compressImage(context, Uri.fromFile(file), maxWidth, maxHeight, compressFormat, quality, destinationDirectoryPath);
+        return ImageUtil.compressImage(context, Uri.fromFile(file), maxWidth, maxHeight, compressFormat, bitmapConfig, quality, destinationDirectoryPath);
     }
 
     public Bitmap compressToBitmap(File file) {
-        return ImageUtil.getScaledBitmap(context, Uri.fromFile(file), maxWidth, maxHeight);
+        return ImageUtil.getScaledBitmap(context, Uri.fromFile(file), maxWidth, maxHeight, bitmapConfig);
     }
 
     public Observable<File> compressToFileAsObservable(final File file) {
@@ -88,6 +89,11 @@ public class Compressor {
 
         public Builder setCompressFormat(Bitmap.CompressFormat compressFormat) {
             compressor.compressFormat = compressFormat;
+            return this;
+        }
+
+        public Builder setBitmapConfig(Bitmap.Config bitmapConfig) {
+            compressor.bitmapConfig = bitmapConfig;
             return this;
         }
 

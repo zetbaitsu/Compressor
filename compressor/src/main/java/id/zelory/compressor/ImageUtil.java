@@ -30,7 +30,7 @@ class ImageUtil {
 
     }
 
-    static Bitmap getScaledBitmap(Context context, Uri imageUri, float maxWidth, float maxHeight) {
+    static Bitmap getScaledBitmap(Context context, Uri imageUri, float maxWidth, float maxHeight, Bitmap.Config bitmapConfig) {
         String filePath = FileUtil.getRealPathFromURI(context, imageUri);
         Bitmap scaledBitmap = null;
 
@@ -113,7 +113,7 @@ class ImageUtil {
             exception.printStackTrace();
         }
         try {
-            scaledBitmap = Bitmap.createBitmap(actualWidth, actualHeight, Bitmap.Config.ARGB_8888);
+            scaledBitmap = Bitmap.createBitmap(actualWidth, actualHeight, bitmapConfig);
         } catch (OutOfMemoryError exception) {
             exception.printStackTrace();
         }
@@ -151,14 +151,14 @@ class ImageUtil {
         return scaledBitmap;
     }
 
-    static File compressImage(Context context, Uri imageUri, float maxWidth, float maxHeight, Bitmap.CompressFormat compressFormat, int quality, String parentPath) {
+    static File compressImage(Context context, Uri imageUri, float maxWidth, float maxHeight, Bitmap.CompressFormat compressFormat, Bitmap.Config bitmapConfig, int quality, String parentPath) {
         FileOutputStream out = null;
         String filename = generateFilePath(context, parentPath, imageUri, compressFormat.name().toLowerCase());
         try {
             out = new FileOutputStream(filename);
 
             //write the compressed bitmap at the destination specified by filename.
-            ImageUtil.getScaledBitmap(context, imageUri, maxWidth, maxHeight).compress(compressFormat, quality, out);
+            ImageUtil.getScaledBitmap(context, imageUri, maxWidth, maxHeight, bitmapConfig).compress(compressFormat, quality, out);
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
