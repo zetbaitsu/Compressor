@@ -8,6 +8,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.text.TextUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -151,9 +152,11 @@ class ImageUtil {
         return scaledBitmap;
     }
 
-    static File compressImage(Context context, Uri imageUri, float maxWidth, float maxHeight, Bitmap.CompressFormat compressFormat, Bitmap.Config bitmapConfig, int quality, String parentPath) {
+    static File compressImage(Context context, Uri imageUri, float maxWidth, float maxHeight,
+                              Bitmap.CompressFormat compressFormat, Bitmap.Config bitmapConfig,
+                              int quality, String parentPath, String prefix, String fileName) {
         FileOutputStream out = null;
-        String filename = generateFilePath(context, parentPath, imageUri, compressFormat.name().toLowerCase());
+        String filename = generateFilePath(context, parentPath, imageUri, compressFormat.name().toLowerCase(), prefix, fileName);
         try {
             out = new FileOutputStream(filename);
 
@@ -174,12 +177,17 @@ class ImageUtil {
         return new File(filename);
     }
 
-    private static String generateFilePath(Context context, String parentPath, Uri uri, String extension) {
+    private static String generateFilePath(Context context, String parentPath, Uri uri,
+                                           String extension, String prefix, String fileName) {
         File file = new File(parentPath);
         if (!file.exists()) {
             file.mkdirs();
         }
-        return file.getAbsolutePath() + File.separator + FileUtil.splitFileName(FileUtil.getFileName(context, uri))[0] + "." + extension;
+        /** if prefix is null, set prefix "" */
+        prefix = TextUtils.isEmpty(prefix) ? "" : prefix;
+        /** reset fileName by prefix and custom file name */
+        fileName = TextUtils.isEmpty(fileName) ? prefix + FileUtil.splitFileName(FileUtil.getFileName(context, uri))[0] : fileName;
+        return file.getAbsolutePath() + File.separator + fileName + "." + extension;
     }
 
     private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
