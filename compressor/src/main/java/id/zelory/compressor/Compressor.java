@@ -27,6 +27,9 @@ public class Compressor {
     private Bitmap.Config bitmapConfig = Bitmap.Config.ARGB_8888;
     private int quality = 80;
     private String destinationDirectoryPath;
+    private String fileNamePrefix;
+    private String fileName;
+
 
     private Compressor(Context context) {
         this.context = context;
@@ -45,7 +48,9 @@ public class Compressor {
     }
 
     public File compressToFile(File file) {
-        return ImageUtil.compressImage(context, Uri.fromFile(file), maxWidth, maxHeight, compressFormat, bitmapConfig, quality, destinationDirectoryPath);
+        return ImageUtil.compressImage(context, Uri.fromFile(file), maxWidth, maxHeight,
+            compressFormat, bitmapConfig, quality, destinationDirectoryPath,
+            fileNamePrefix, fileName);
     }
 
     public Bitmap compressToBitmap(File file) {
@@ -104,6 +109,16 @@ public class Compressor {
 
         public Builder setDestinationDirectoryPath(String destinationDirectoryPath) {
             compressor.destinationDirectoryPath = destinationDirectoryPath;
+            return this;
+        }
+
+        public Builder setFileNamePrefix(String prefix) {
+            compressor.fileNamePrefix = prefix;
+            return this;
+        }
+
+        public Builder setFileName(String fileName) {
+            compressor.fileName = fileName;
             return this;
         }
 
