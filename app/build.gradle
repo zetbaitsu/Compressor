@@ -1,4 +1,16 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+    ext.kotlin_version = '1.0.6'
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
 
 android {
     compileSdkVersion 25
@@ -17,13 +29,20 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
 }
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:24.2.1'
-    compile 'id.zelory:compressor:1.0.4'
-    //compile project(':compressor')
+    compile 'com.android.support:appcompat-v7:25.0.1'
+//    compile 'id.zelory:compressor:1.0.4'
+    compile project(':compressor')
     compile 'io.reactivex:rxandroid:1.2.1'
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+}
+repositories {
+    mavenCentral()
 }
