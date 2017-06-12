@@ -5,9 +5,10 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 
 import java.io.File;
+import java.util.concurrent.Callable;
 
-import rx.Observable;
-import rx.functions.Func0;
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
 
 /**
  * Created on : June 18, 2016
@@ -52,18 +53,18 @@ public class Compressor {
     }
 
     public Observable<File> compressToFileAsObservable(final File file) {
-        return Observable.defer(new Func0<Observable<File>>() {
+        return Observable.defer(new Callable<ObservableSource<File>>() {
             @Override
-            public Observable<File> call() {
+            public ObservableSource<File> call() throws Exception {
                 return Observable.just(compressToFile(file));
             }
         });
     }
 
     public Observable<Bitmap> compressToBitmapAsObservable(final File file) {
-        return Observable.defer(new Func0<Observable<Bitmap>>() {
+        return Observable.defer(new Callable<ObservableSource<Bitmap>>() {
             @Override
-            public Observable<Bitmap> call() {
+            public ObservableSource<Bitmap> call() throws Exception {
                 return Observable.just(compressToBitmap(file));
             }
         });

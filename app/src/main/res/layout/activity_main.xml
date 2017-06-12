@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -27,7 +26,7 @@
                 android:layout_marginEnd="4dp"
                 android:layout_marginRight="4dp"
                 android:layout_weight="1"
-                android:adjustViewBounds="true"/>
+                android:adjustViewBounds="true" />
 
             <ImageView
                 android:id="@+id/compressed_image"
@@ -36,7 +35,7 @@
                 android:layout_marginLeft="4dp"
                 android:layout_marginStart="4dp"
                 android:layout_weight="1"
-                android:adjustViewBounds="true"/>
+                android:adjustViewBounds="true" />
 
         </LinearLayout>
 
@@ -54,7 +53,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="Actual Image"
-                android:textSize="12sp"/>
+                android:textSize="12sp" />
 
             <TextView
                 android:layout_width="0dp"
@@ -64,7 +63,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="Compressed Image"
-                android:textSize="12sp"/>
+                android:textSize="12sp" />
 
         </LinearLayout>
 
@@ -83,7 +82,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="Size : -"
-                android:textSize="12sp"/>
+                android:textSize="12sp" />
 
             <TextView
                 android:id="@+id/compressed_size"
@@ -94,7 +93,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="Size : -"
-                android:textSize="12sp"/>
+                android:textSize="12sp" />
 
         </LinearLayout>
 
@@ -103,21 +102,21 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:onClick="chooseImage"
-            android:text="Choose image"/>
+            android:text="Choose image" />
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:onClick="compressImage"
-            android:text="Compress image"/>
+            android:text="Compress image" />
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:onClick="customCompressImage"
-            android:text="Custom compress"/>
+            android:text="Custom compress" />
 
     </LinearLayout>
 </ScrollView>
