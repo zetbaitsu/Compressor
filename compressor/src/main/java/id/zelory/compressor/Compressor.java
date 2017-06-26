@@ -58,7 +58,7 @@ public class Compressor {
 
     public File compressToFile(File imageFile, String compressedFileName) throws IOException {
         return ImageUtil.compressImage(imageFile, maxWidth, maxHeight, compressFormat, quality,
-                destinationDirectoryPath + File.pathSeparator + compressedFileName);
+                destinationDirectoryPath + File.separator + compressedFileName);
     }
 
     public Bitmap compressToBitmap(File imageFile) {
