@@ -2,6 +2,8 @@ package id.zelory.compressor;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -21,6 +23,10 @@ class ImageUtil {
 
     static File compressImage(File imageFile, int reqWidth, int reqHeight, Bitmap.CompressFormat compressFormat, int quality, String destinationPath) throws IOException {
         FileOutputStream fileOutputStream = null;
+        File file = new File(destinationPath).getParentFile();
+        if (!file.exists()) {
+            file.mkdirs();
+        }
         try {
             fileOutputStream = new FileOutputStream(destinationPath);
             // write the compressed bitmap at the destination specified by destinationPath.
@@ -35,7 +41,7 @@ class ImageUtil {
         return new File(destinationPath);
     }
 
-    static Bitmap decodeSampledBitmapFromFile(File imageFile, int reqWidth, int reqHeight) {
+    static Bitmap decodeSampledBitmapFromFile(File imageFile, int reqWidth, int reqHeight) throws IOException {
         // First decode with inJustDecodeBounds=true to check dimensions
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
@@ -46,7 +52,23 @@ class ImageUtil {
 
         // Decode bitmap with inSampleSize set
         options.inJustDecodeBounds = false;
-        return BitmapFactory.decodeFile(imageFile.getAbsolutePath(), options);
+
+        Bitmap scaledBitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath(), options);
+
+        //check the rotation of the image and display it properly
+        ExifInterface exif;
+        exif = new ExifInterface(imageFile.getAbsolutePath());
+        int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 0);
+        Matrix matrix = new Matrix();
+        if (orientation == 6) {
+            matrix.postRotate(90);
+        } else if (orientation == 3) {
+            matrix.postRotate(180);
+        } else if (orientation == 8) {
+            matrix.postRotate(270);
+        }
+        scaledBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0, scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix, true);
+        return scaledBitmap;
     }
 
     private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {

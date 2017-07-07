@@ -24,7 +24,7 @@ public class Compressor {
     private String destinationDirectoryPath;
 
     public Compressor(Context context) {
-        destinationDirectoryPath = context.getCacheDir().getPath() + File.pathSeparator + "Compressor";
+        destinationDirectoryPath = context.getCacheDir().getPath() + File.separator + "images";
     }
 
     public Compressor setMaxWidth(int maxWidth) {
@@ -61,7 +61,7 @@ public class Compressor {
                 destinationDirectoryPath + File.separator + compressedFileName);
     }
 
-    public Bitmap compressToBitmap(File imageFile) {
+    public Bitmap compressToBitmap(File imageFile) throws IOException {
         return ImageUtil.decodeSampledBitmapFromFile(imageFile, maxWidth, maxHeight);
     }
 
@@ -86,7 +86,11 @@ public class Compressor {
         return Flowable.defer(new Callable<Flowable<Bitmap>>() {
             @Override
             public Flowable<Bitmap> call() {
-                return Flowable.just(compressToBitmap(imageFile));
+                try {
+                    return Flowable.just(compressToBitmap(imageFile));
+                } catch (IOException e) {
+                    return Flowable.error(e);
+                }
             }
         });
     }
