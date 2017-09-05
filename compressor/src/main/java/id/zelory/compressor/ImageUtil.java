@@ -58,7 +58,7 @@ class ImageUtil {
         float imgRatio = (float) actualWidth / (float) actualHeight;
         float maxRatio = reqWidth / reqHeight;
 
-        if (actualHeight > reqWidth || actualWidth > reqHeight) {
+        if (actualHeight > reqHeight || actualWidth > reqWidth) {
             //If Height is greater
             if (imgRatio < maxRatio) {
                 imgRatio = reqHeight / actualHeight;
