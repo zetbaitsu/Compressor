@@ -23,7 +23,7 @@ class ImageUtil {
 
     }
 
-    static File compressImage(File imageFile, int reqWidth, int reqHeight, Bitmap.CompressFormat compressFormat, int quality, String destinationPath) throws IOException {
+    static File compressImage(File imageFile, float reqWidth, float reqHeight, Bitmap.CompressFormat compressFormat, int quality, String destinationPath) throws IOException {
         FileOutputStream fileOutputStream = null;
         File file = new File(destinationPath).getParentFile();
         if (!file.exists()) {
@@ -43,7 +43,7 @@ class ImageUtil {
         return new File(destinationPath);
     }
 
-    static Bitmap decodeSampledBitmapFromFile(File imageFile, int reqWidth, int reqHeight) throws IOException {
+    static Bitmap decodeSampledBitmapFromFile(File imageFile, float reqWidth, float reqHeight) throws IOException {
         // First decode with inJustDecodeBounds=true to check dimensions
 
         Bitmap scaledBitmap = null, bmp = null;
@@ -63,21 +63,21 @@ class ImageUtil {
             if (imgRatio < maxRatio) {
                 imgRatio = reqHeight / actualHeight;
                 actualWidth = (int) (imgRatio * actualWidth);
-                actualHeight = reqHeight;
+                actualHeight = (int) reqHeight;
 
             }  //If Width is greater
             else if (imgRatio > maxRatio) {
                 imgRatio = reqWidth / actualWidth;
                 actualHeight = (int) (imgRatio * actualHeight);
-                actualWidth = reqWidth;
+                actualWidth = (int) reqWidth;
             } else {
-                actualHeight = reqHeight;
-                actualWidth = reqWidth;
+                actualHeight = (int) reqHeight;
+                actualWidth = (int) reqWidth;
             }
         }
 
         // Calculate inSampleSize
-        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+        options.inSampleSize = calculateInSampleSize(options, actualWidth, actualHeight);
         options.inJustDecodeBounds = false;
         options.inDither = false;
         options.inPurgeable = true;
