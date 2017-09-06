@@ -17,8 +17,8 @@ import io.reactivex.Flowable;
  */
 public class Compressor {
     //max width and height values of the compressed image is taken as 612x816
-    private int maxWidth = 612;
-    private int maxHeight = 816;
+    private float maxWidth = 612.0f;
+    private float maxHeight = 816.0f;
     private Bitmap.CompressFormat compressFormat = Bitmap.CompressFormat.JPEG;
     private int quality = 80;
     private String destinationDirectoryPath;
@@ -27,12 +27,12 @@ public class Compressor {
         destinationDirectoryPath = context.getCacheDir().getPath() + File.separator + "images";
     }
 
-    public Compressor setMaxWidth(int maxWidth) {
+    public Compressor setMaxWidth(float maxWidth) {
         this.maxWidth = maxWidth;
         return this;
     }
 
-    public Compressor setMaxHeight(int maxHeight) {
+    public Compressor setMaxHeight(float maxHeight) {
         this.maxHeight = maxHeight;
         return this;
     }
