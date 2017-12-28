@@ -6,8 +6,17 @@ Compressor is a lightweight and powerful android image compression library. Comp
 
 # Gradle
 ```groovy
+allprojects {
+	repositories {
+		...
+		maven { url 'https://jitpack.io' }
+	}
+}
+```
+
+```groovy
 dependencies {
-    compile 'id.zelory:compressor:2.1.0'
+    compile 'com.github.aftabsikander:Compressor:2.1.1
 }
 ```
 # Let's compress the image size!
