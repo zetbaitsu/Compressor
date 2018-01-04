@@ -1,13 +1,17 @@
 package id.zelory.compressor;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
+import android.net.Uri;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Created on : June 18, 2016
@@ -39,6 +43,46 @@ class ImageUtil {
         }
 
         return new File(destinationPath);
+    }
+
+    static File compressImage(Context context, Uri imageUri, int reqWidth, int reqHeight, Bitmap.CompressFormat compressFormat, int quality, String destinationPath) throws IOException {
+        FileOutputStream fileOutputStream = null;
+        File file = new File(destinationPath).getParentFile();
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+        try {
+            fileOutputStream = new FileOutputStream(destinationPath);
+            // write the compressed bitmap at the destination specified by destinationPath.
+            decodeSampledBitmapFromUri(context, imageUri, reqWidth, reqHeight).compress(compressFormat, quality, fileOutputStream);
+        } finally {
+            if (fileOutputStream != null) {
+                fileOutputStream.flush();
+                fileOutputStream.close();
+            }
+        }
+
+        return new File(destinationPath);
+    }
+
+     static Bitmap decodeSampledBitmapFromUri(Context context, Uri imageUri, int reqWidth, int reqHeight) throws FileNotFoundException {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        InputStream inputStream = context.getContentResolver().openInputStream(imageUri);
+        BitmapFactory.decodeStream(inputStream, null, options);
+
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+
+        Bitmap scaledBitmap = BitmapFactory.decodeStream(inputStream, null, options);
+
+        //check the rotation of the image and display it properly
+        Matrix matrix = new Matrix();
+        scaledBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0, scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix, true);
+        return scaledBitmap;
     }
 
     static Bitmap decodeSampledBitmapFromFile(File imageFile, int reqWidth, int reqHeight) throws IOException {
