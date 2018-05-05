@@ -4,12 +4,16 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.support.media.ExifInterface;
+import android.util.Log;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.channels.FileChannel;
 
 /**
  * Created on : June 18, 2016
@@ -49,20 +53,24 @@ class ImageUtil {
 
     static Bitmap decodeSampledBitmapFromFile(InputStream is, int reqWidth, int reqHeight) throws IOException {
         // First decode with inJustDecodeBounds=true to check dimensions
+        InputStream inputStream = new BufferedInputStream(is);
+        is.mark(is.available());
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
-        BitmapFactory.decodeStream(is, null, options);
+        BitmapFactory.decodeStream(inputStream, null, options);
 
         // Calculate inSampleSize
         options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
 
         // Decode bitmap with inSampleSize set
         options.inJustDecodeBounds = false;
-        Bitmap scaledBitmap = BitmapFactory.decodeStream(is, null, options);
+
+        inputStream.reset();
+        Bitmap scaledBitmap = BitmapFactory.decodeStream(inputStream, null, options);
 
         //check the rotation of the image and display it properly
         ExifInterface exif;
-        exif = new ExifInterface(is);
+        exif = new ExifInterface(inputStream);
         int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 0);
         Matrix matrix = new Matrix();
         if (orientation == 6) {
@@ -73,7 +81,7 @@ class ImageUtil {
             matrix.postRotate(270);
         }
         scaledBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0, scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix, true);
-        is.close();
+        inputStream.close();
         return scaledBitmap;
     }
 
@@ -97,4 +105,57 @@ class ImageUtil {
 
         return inSampleSize;
     }
+
+
+    public static class MarkableFileInputStream extends FilterInputStream
+    {
+        private static final String TAG = MarkableFileInputStream.class.getSimpleName();
+
+        private FileChannel m_fileChannel;
+        private long m_mark = -1;
+
+        public MarkableFileInputStream( FileInputStream fis )
+        {
+            super( fis );
+            m_fileChannel = fis.getChannel();
+        }
+
+        @Override
+        public boolean markSupported()
+        {
+            return true;
+        }
+
+        @Override
+        public synchronized void mark( int readlimit )
+        {
+            try
+            {
+                m_mark = m_fileChannel.position();
+            }
+            catch( IOException ex )
+            {
+                Log.d( TAG, "Mark failed" );
+                m_mark = -1;
+            }
+        }
+
+        @Override
+        public synchronized void reset() throws IOException
+        {
+            // Reset to beginning if mark has not been called or was reset
+            // This is a little bit of custom functionality to solve problems
+            // specific to Android's Bitmap decoding, and is slightly non-standard behavior
+            if( m_mark == -1 )
+            {
+                m_fileChannel.position( 0 );
+            }
+            else
+            {
+                m_fileChannel.position( m_mark );
+                m_mark = -1;
+            }
+        }
+    }
+
 }
