@@ -2,11 +2,10 @@ package id.zelory.compressor;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.net.Uri;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.concurrent.Callable;
 
 import io.reactivex.Flowable;
@@ -63,16 +62,17 @@ public class Compressor {
     }
 
     public File compressToFile(File imageFile, String compressedFileName) throws IOException {
-        return compressToFile(new FileInputStream(imageFile), compressedFileName);
+        return ImageUtil.compressImage(imageFile, maxWidth, maxHeight, compressFormat, quality,
+                destinationDirectoryPath + File.separator + compressedFileName);
     }
 
-    public File compressToFile(InputStream imageStream, String compressedFileName) throws IOException {
-        return ImageUtil.compressImage(imageStream, maxWidth, maxHeight, compressFormat, quality,
+    public File compressToFile(Context context, Uri uri, String compressedFileName) throws IOException {
+        return ImageUtil.compressImage(context.getApplicationContext(), uri, maxWidth, maxHeight, compressFormat, quality,
                 destinationDirectoryPath + File.separator + compressedFileName);
     }
 
     public Bitmap compressToBitmap(File imageFile) throws IOException {
-        return ImageUtil.decodeSampledBitmapFromFile(new FileInputStream(imageFile), maxWidth, maxHeight);
+        return ImageUtil.decodeSampledBitmapFromFile(imageFile, maxWidth, maxHeight);
     }
 
     public Flowable<File> compressToFileAsFlowable(final File imageFile) {
@@ -92,12 +92,12 @@ public class Compressor {
         });
     }
 
-    public Flowable<File> compressToFileAsFlowable(final InputStream imageStream, final String compressedFileName) {
+    public Flowable<File> compressToFileAsFlowable(final Context context, final Uri uri, final String compressedFileName) {
         return Flowable.defer(new Callable<Flowable<File>>() {
             @Override
             public Flowable<File> call() {
                 try {
-                    return Flowable.just(compressToFile(imageStream, compressedFileName));
+                    return Flowable.just(compressToFile(context.getApplicationContext(), uri, compressedFileName));
                 } catch (IOException e) {
                     return Flowable.error(e);
                 }

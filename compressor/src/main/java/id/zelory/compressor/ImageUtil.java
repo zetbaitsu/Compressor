@@ -1,12 +1,13 @@
 package id.zelory.compressor;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.net.Uri;
 import android.support.media.ExifInterface;
 import android.util.Log;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -28,10 +29,6 @@ class ImageUtil {
     }
 
     static File compressImage(File imageFile, int reqWidth, int reqHeight, Bitmap.CompressFormat compressFormat, int quality, String destinationPath) throws IOException {
-        return compressImage(new FileInputStream(imageFile), reqWidth, reqHeight, compressFormat, quality, destinationPath);
-    }
-
-    static File compressImage(InputStream is, int reqWidth, int reqHeight, Bitmap.CompressFormat compressFormat, int quality, String destinationPath) throws IOException {
         FileOutputStream fileOutputStream = null;
         File file = new File(destinationPath).getParentFile();
         if (!file.exists()) {
@@ -40,7 +37,7 @@ class ImageUtil {
         try {
             fileOutputStream = new FileOutputStream(destinationPath);
             // write the compressed bitmap at the destination specified by destinationPath.
-            decodeSampledBitmapFromFile(is, reqWidth, reqHeight).compress(compressFormat, quality, fileOutputStream);
+            decodeSampledBitmapFromFile(imageFile, reqWidth, reqHeight).compress(compressFormat, quality, fileOutputStream);
         } finally {
             if (fileOutputStream != null) {
                 fileOutputStream.flush();
@@ -51,10 +48,61 @@ class ImageUtil {
         return new File(destinationPath);
     }
 
-    static Bitmap decodeSampledBitmapFromFile(InputStream is, int reqWidth, int reqHeight) throws IOException {
+    static Bitmap decodeSampledBitmapFromFile(File imageFile, int reqWidth, int reqHeight) throws IOException {
         // First decode with inJustDecodeBounds=true to check dimensions
-        InputStream inputStream = new BufferedInputStream(is);
-        is.mark(is.available());
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(imageFile.getAbsolutePath(), options);
+
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+
+        Bitmap scaledBitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath(), options);
+
+        //check the rotation of the image and display it properly
+        ExifInterface exif;
+        exif = new ExifInterface(imageFile.getAbsolutePath());
+        int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 0);
+        Matrix matrix = new Matrix();
+        if (orientation == 6) {
+            matrix.postRotate(90);
+        } else if (orientation == 3) {
+            matrix.postRotate(180);
+        } else if (orientation == 8) {
+            matrix.postRotate(270);
+        }
+        scaledBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0, scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix, true);
+        return scaledBitmap;
+    }
+
+
+    static File compressImage(Context context, Uri uri, int reqWidth, int reqHeight, Bitmap.CompressFormat compressFormat, int quality, String destinationPath) throws IOException {
+        FileOutputStream fileOutputStream = null;
+        File file = new File(destinationPath).getParentFile();
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+        try {
+            fileOutputStream = new FileOutputStream(destinationPath);
+            // write the compressed bitmap at the destination specified by destinationPath.
+            decodeSampledBitmapFromFile(context, uri, reqWidth, reqHeight).compress(compressFormat, quality, fileOutputStream);
+        } finally {
+            if (fileOutputStream != null) {
+                fileOutputStream.flush();
+                fileOutputStream.close();
+            }
+        }
+
+        return new File(destinationPath);
+    }
+
+    static Bitmap decodeSampledBitmapFromFile(Context context, Uri uri, int reqWidth, int reqHeight) throws IOException {
+        // First decode with inJustDecodeBounds=true to check dimensions
+        InputStream inputStream = context.getContentResolver().openInputStream(uri);
+
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeStream(inputStream, null, options);
@@ -65,9 +113,13 @@ class ImageUtil {
         // Decode bitmap with inSampleSize set
         options.inJustDecodeBounds = false;
 
-        inputStream.reset();
+        inputStream.close();
+        inputStream = context.getContentResolver().openInputStream(uri);
+
         Bitmap scaledBitmap = BitmapFactory.decodeStream(inputStream, null, options);
 
+        inputStream.close();
+        inputStream = context.getContentResolver().openInputStream(uri);
         //check the rotation of the image and display it properly
         ExifInterface exif;
         exif = new ExifInterface(inputStream);
