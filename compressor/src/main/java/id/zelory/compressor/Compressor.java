@@ -2,12 +2,15 @@ package id.zelory.compressor;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.net.Uri;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.concurrent.Callable;
 
 import io.reactivex.Flowable;
+import io.reactivex.annotations.Nullable;
 
 /**
  * Created on : June 18, 2016
@@ -22,9 +25,11 @@ public class Compressor {
     private Bitmap.CompressFormat compressFormat = Bitmap.CompressFormat.JPEG;
     private int quality = 80;
     private String destinationDirectoryPath;
+    private WeakReference<Context> contextWeakReference;
 
     public Compressor(Context context) {
         destinationDirectoryPath = context.getCacheDir().getPath() + File.separator + "images";
+        contextWeakReference = new WeakReference<Context>(context);
     }
 
     public Compressor setMaxWidth(int maxWidth) {
@@ -58,6 +63,14 @@ public class Compressor {
 
     public File compressToFile(File imageFile, String compressedFileName) throws IOException {
         return ImageUtil.compressImage(imageFile, maxWidth, maxHeight, compressFormat, quality,
+                destinationDirectoryPath + File.separator + compressedFileName);
+    }
+
+    public @Nullable File compressToUri(Uri imageUri, String compressedFileName) throws IOException {
+        if (contextWeakReference == null || contextWeakReference.get() == null) {
+            return null;
+        }
+        return ImageUtil.compressImage(contextWeakReference.get(),imageUri, maxWidth, maxHeight, compressFormat, quality,
                 destinationDirectoryPath + File.separator + compressedFileName);
     }
 
