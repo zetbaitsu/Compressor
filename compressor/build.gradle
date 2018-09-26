@@ -38,12 +38,12 @@ ext {
 }
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion '25.0.2'
+    compileSdkVersion 28
+    buildToolsVersion '28.0.2'
 
     defaultConfig {
         minSdkVersion 9
-        targetSdkVersion 25
+        targetSdkVersion 28
         versionCode 5
         versionName "2.1.0"
     }
@@ -59,7 +59,7 @@ apply from: 'https://raw.githubusercontent.com/zetbaitsu/JCenter/master/installv
 apply from: 'https://raw.githubusercontent.com/zetbaitsu/JCenter/master/bintrayv1.gradle'
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    testCompile 'junit:junit:4.12'
-    compile "io.reactivex.rxjava2:rxjava:2.1.0"
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    testImplementation 'junit:junit:4.12'
+    implementation "io.reactivex.rxjava2:rxjava:2.1.0"
 }
