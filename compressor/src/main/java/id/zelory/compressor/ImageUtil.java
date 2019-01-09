@@ -139,7 +139,7 @@ class ImageUtil {
         int inSampleSize = 1;
 
         if (height > reqHeight || width > reqWidth) {
-
+            inSampleSize *= 2;
             final int halfHeight = height / 2;
             final int halfWidth = width / 2;
 
