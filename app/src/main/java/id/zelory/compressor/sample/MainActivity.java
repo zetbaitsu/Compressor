@@ -19,10 +19,9 @@ import java.text.DecimalFormat;
 import java.util.Random;
 
 import id.zelory.compressor.Compressor;
-import id.zelory.compressor.FileUtil;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.schedulers.Schedulers;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
     private static final int PICK_IMAGE_REQUEST = 1;
@@ -59,26 +58,27 @@ public class MainActivity extends AppCompatActivity {
         } else {
 
             // Compress image in main thread
-            //compressedImage = Compressor.getDefault(this).compressToFile(actualImage);
+            //compressedImage = new Compressor(this).compressToFile(actualImage);
             //setCompressedImage();
 
             // Compress image to bitmap in main thread
-            /*compressedImageView.setImageBitmap(Compressor.getDefault(this).compressToBitmap(actualImage));*/
+            //compressedImageView.setImageBitmap(new Compressor(this).compressToBitmap(actualImage));
 
             // Compress image using RxJava in background thread
-            Compressor.getDefault(this)
-                    .compressToFileAsObservable(actualImage)
+            new Compressor(this)
+                    .compressToFileAsFlowable(actualImage)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Action1<File>() {
+                    .subscribe(new Consumer<File>() {
                         @Override
-                        public void call(File file) {
+                        public void accept(File file) {
                             compressedImage = file;
                             setCompressedImage();
                         }
-                    }, new Action1<Throwable>() {
+                    }, new Consumer<Throwable>() {
                         @Override
-                        public void call(Throwable throwable) {
+                        public void accept(Throwable throwable) {
+                            throwable.printStackTrace();
                             showError(throwable.getMessage());
                         }
                     });
@@ -90,38 +90,43 @@ public class MainActivity extends AppCompatActivity {
             showError("Please choose an image!");
         } else {
             // Compress image in main thread using custom Compressor
-            compressedImage = new Compressor.Builder(this)
-                    .setMaxWidth(640)
-                    .setMaxHeight(480)
-                    .setQuality(75)
-                    .setCompressFormat(Bitmap.CompressFormat.WEBP)
-                    .setDestinationDirectoryPath(Environment.getExternalStoragePublicDirectory(
-                            Environment.DIRECTORY_PICTURES).getAbsolutePath())
-                    .build()
-                    .compressToFile(actualImage);
-            setCompressedImage();
+            try {
+                compressedImage = new Compressor(this)
+                        .setMaxWidth(640)
+                        .setMaxHeight(480)
+                        .setQuality(75)
+                        .setCompressFormat(Bitmap.CompressFormat.WEBP)
+                        .setDestinationDirectoryPath(Environment.getExternalStoragePublicDirectory(
+                                Environment.DIRECTORY_PICTURES).getAbsolutePath())
+                        .compressToFile(actualImage);
+
+                setCompressedImage();
+            } catch (IOException e) {
+                e.printStackTrace();
+                showError(e.getMessage());
+            }
 
             // Compress image using RxJava in background thread with custom Compressor
-           /* new Compressor.Builder(this)
+            /*new Compressor(this)
                     .setMaxWidth(640)
                     .setMaxHeight(480)
                     .setQuality(75)
                     .setCompressFormat(Bitmap.CompressFormat.WEBP)
                     .setDestinationDirectoryPath(Environment.getExternalStoragePublicDirectory(
                             Environment.DIRECTORY_PICTURES).getAbsolutePath())
-                    .build()
-                    .compressToFileAsObservable(actualImage)
+                    .compressToFileAsFlowable(actualImage)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Action1<File>() {
+                    .subscribe(new Consumer<File>() {
                         @Override
-                        public void call(File file) {
+                        public void accept(File file) {
                             compressedImage = file;
                             setCompressedImage();
                         }
-                    }, new Action1<Throwable>() {
+                    }, new Consumer<Throwable>() {
                         @Override
-                        public void call(Throwable throwable) {
+                        public void accept(Throwable throwable) {
+                            throwable.printStackTrace();
                             showError(throwable.getMessage());
                         }
                     });*/

@@ -28,7 +28,7 @@ ext {
     siteUrl = 'https://github.com/zetbaitsu/Compressor'
     gitUrl = 'https://github.com/zetbaitsu/Compressor.git'
 
-    libraryVersion = '1.0.5'
+    libraryVersion = '2.1.1'
 
     developerId = 'zetbaitsu'
     developerName = 'Zetra'
@@ -40,14 +40,15 @@ ext {
 }
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.1"
+
+    compileSdkVersion 28
+    buildToolsVersion '28.0.2'
 
     defaultConfig {
         minSdkVersion 9
-        targetSdkVersion 25
+        targetSdkVersion 28
         versionCode 5
-        versionName "1.0.5"
+        versionName "2.1.1"
     }
     buildTypes {
         release {
@@ -64,11 +65,12 @@ apply from: 'https://raw.githubusercontent.com/zetbaitsu/JCenter/master/installv
 apply from: 'https://raw.githubusercontent.com/zetbaitsu/JCenter/master/bintrayv1.gradle'
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    testCompile 'junit:junit:4.12'
-    compile 'io.reactivex:rxjava:1.2.3'
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    testImplementation 'junit:junit:4.12'
+    implementation "io.reactivex.rxjava2:rxjava:2.1.0"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
+
 repositories {
     mavenCentral()
 }

@@ -7,44 +7,44 @@ Compressor is a lightweight and powerful android image compression library. Comp
 # Gradle
 ```groovy
 dependencies {
-    compile 'id.zelory:compressor:1.0.4'
+    implementation 'id.zelory:compressor:2.1.1'
 }
 ```
 # Let's compress the image size!
 #### Compress Image File
 ```java
-compressedImageFile = Compressor.getDefault(this).compressToFile(actualImageFile);
+compressedImageFile = new Compressor(this).compressToFile(actualImageFile);
 ```
 #### Compress Image File to Bitmap
 ```java
-compressedImageBitmap = Compressor.getDefault(this).compressToBitmap(actualImageFile);
+compressedImageBitmap = new Compressor(this).compressToBitmap(actualImageFile);
 ```
 ### I want custom Compressor!
 ```java
-compressedImage = new Compressor.Builder(this)
+compressedImage = new Compressor(this)
             .setMaxWidth(640)
             .setMaxHeight(480)
             .setQuality(75)
             .setCompressFormat(Bitmap.CompressFormat.WEBP)
             .setDestinationDirectoryPath(Environment.getExternalStoragePublicDirectory(
               Environment.DIRECTORY_PICTURES).getAbsolutePath())
-            .build()
             .compressToFile(actualImage);
 ```
 ### Stay cool compress image asynchronously with RxJava!
 ```java
-Compressor.getDefault(this)
-        .compressToFileAsObservable(actualImage)
+new Compressor(this)
+        .compressToFileAsFlowable(actualImage)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(new Action1<File>() {
+        .subscribe(new Consumer<File>() {
             @Override
-            public void call(File file) {
+            public void accept(File file) {
                 compressedImage = file;
             }
-        }, new Action1<Throwable>() {
+        }, new Consumer<Throwable>() {
             @Override
-            public void call(Throwable throwable) {
+            public void accept(Throwable throwable) {
+                throwable.printStackTrace();
                 showError(throwable.getMessage());
             }
         });
