@@ -59,7 +59,7 @@ apply from: 'https://raw.githubusercontent.com/zetbaitsu/JCenter/master/installv
 apply from: 'https://raw.githubusercontent.com/zetbaitsu/JCenter/master/bintrayv1.gradle'
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    testCompile 'junit:junit:4.12'
-    compile "io.reactivex.rxjava2:rxjava:2.1.0"
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestImplementation 'junit:junit:4.12'
+    implementation "io.reactivex.rxjava2:rxjava:2.1.0"
 }
