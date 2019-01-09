@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
 apply plugin: 'com.github.dcendents.android-maven'
 
 buildscript {
@@ -6,10 +7,11 @@ buildscript {
         mavenCentral()
         jcenter()
     }
-
+    ext.kotlin_version = '1.0.6'
     dependencies {
         classpath 'com.github.dcendents:android-maven-gradle-plugin:1.4.1'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.6'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
@@ -38,6 +40,7 @@ ext {
 }
 
 android {
+
     compileSdkVersion 28
     buildToolsVersion '28.0.2'
 
@@ -53,6 +56,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
 }
 
 apply from: 'https://raw.githubusercontent.com/zetbaitsu/JCenter/master/installv1.gradle'
@@ -62,4 +68,9 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     testImplementation 'junit:junit:4.12'
     implementation "io.reactivex.rxjava2:rxjava:2.1.0"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+}
+
+repositories {
+    mavenCentral()
 }
