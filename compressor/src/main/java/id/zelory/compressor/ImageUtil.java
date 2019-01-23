@@ -77,7 +77,7 @@ class ImageUtil {
         final int width = options.outWidth;
         int inSampleSize = 1;
 
-        if (height > reqHeight || width > reqWidth) {
+        if (height > reqHeight && width > reqWidth) {
             inSampleSize *= 2;
             final int halfHeight = height / 2;
             final int halfWidth = width / 2;

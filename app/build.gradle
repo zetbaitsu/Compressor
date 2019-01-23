@@ -23,7 +23,7 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'id.zelory:compressor:2.1.1'
+    compile 'id.zelory:compressor:2.1.2'
     //compile project(':compressor')
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
 }
