@@ -16,7 +16,9 @@ allprojects {
 
 ```groovy
 dependencies {
+ master
     compile 'com.github.aftabsikander:Compressor:2.1.1
+
 }
 ```
 # Let's compress the image size!
