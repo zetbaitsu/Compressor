@@ -62,8 +62,12 @@ apply from: 'https://raw.githubusercontent.com/zetbaitsu/JCenter/master/bintrayv
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_coroutines_version"
 
     testImplementation 'junit:junit:4.12'
+    testImplementation 'io.mockk:mockk:1.9.3'
+    testImplementation 'com.natpryce:hamkrest:1.7.0.0'
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlin_coroutines_version"
 }
 
 repositories {
