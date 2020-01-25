@@ -144,9 +144,9 @@ class SizeConstraintTest {
         val compression = Compression()
 
         // When
-        compression.quality(90)
+        compression.size(9000)
 
         // Then
-        assertThat(compression.constraints.first(), isA<QualityConstraint>())
+        assertThat(compression.constraints.first(), isA<SizeConstraint>())
     }
 }
