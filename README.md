@@ -1,6 +1,7 @@
 Compressor
 ======
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Compressor-blue.svg?style=flat)](http://android-arsenal.com/details/1/3758)
+[![Build Status](https://travis-ci.org/zetbaitsu/Compressor.svg?branch=master)](https://travis-ci.org/zetbaitsu/Compressor)
 <p align="center"><img src="https://raw.githubusercontent.com/zetbaitsu/Compressor/master/ss.png" width="50%" /></p>
 Compressor is a lightweight and powerful android image compression library. Compressor will allow you to compress large photos into smaller sized photos with very less or negligible loss in quality of the image.
 
