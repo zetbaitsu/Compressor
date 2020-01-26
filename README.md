@@ -78,6 +78,9 @@ GlobalScope.launch {
 val compressedImageFile = Compressor.compress(context, actualImageFile, Dispatchers.Main)
 ```
 
+### Old version
+Please read this [readme](https://github.com/zetbaitsu/Compressor/blob/master/README_v2.md)
+
 License
 -------
     Copyright (c) 2016 Zetra.
