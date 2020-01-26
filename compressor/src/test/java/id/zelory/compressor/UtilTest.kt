@@ -30,7 +30,7 @@ class UtilTest {
     }
 
     @Test
-    fun `verify get compress format from file`() {
+    fun `get compress format from file should return correct format`() {
         assertThat(File("a_file.png").compressFormat(), equalTo(Bitmap.CompressFormat.PNG))
         assertThat(File("a_file.webp").compressFormat(), equalTo(Bitmap.CompressFormat.WEBP))
         assertThat(File("a_file.jpg").compressFormat(), equalTo(Bitmap.CompressFormat.JPEG))
@@ -38,7 +38,7 @@ class UtilTest {
     }
 
     @Test
-    fun `verify get extension from compress format`() {
+    fun `get extension from compress format should return correct extension`() {
         assertThat(Bitmap.CompressFormat.PNG.extension(), equalTo("png"))
         assertThat(Bitmap.CompressFormat.WEBP.extension(), equalTo("webp"))
         assertThat(Bitmap.CompressFormat.JPEG.extension(), equalTo("jpg"))
@@ -152,7 +152,7 @@ class UtilTest {
     }
 
     @Test
-    fun `verify copy to cache`() {
+    fun `copy to cache should copy file to right folder`() {
         // Given
         val context = mockk<Context>(relaxed = true)
         every { context.cacheDir.path } returns "folder/"
@@ -191,7 +191,7 @@ class UtilTest {
     }
 
     @Test
-    fun `overwrite with different format should delete old file and save image with new format`() {
+    fun `overwrite with different format should save image with new format extension`() {
         // Given
         mockkStatic("id.zelory.compressor.UtilKt")
         every { saveBitmap(any(), any(), any(), any()) } just Runs

@@ -46,7 +46,7 @@ class CompressorTest {
     }
 
     @Test
-    fun `compress with default specs`() = testDispatcher.runBlockingTest {
+    fun `compress with default specs should execute default constraint`() = testDispatcher.runBlockingTest {
         // Given
         mockkConstructor(DefaultConstraint::class)
         var executedConstraint = 0
@@ -69,7 +69,7 @@ class CompressorTest {
     }
 
     @Test
-    fun `compress with custom specs`() = testDispatcher.runBlockingTest {
+    fun `compress with custom specs should execute all constraint provided`() = testDispatcher.runBlockingTest {
         // Given
         mockkConstructor(ResolutionConstraint::class)
         mockkConstructor(QualityConstraint::class)
