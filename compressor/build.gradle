@@ -28,7 +28,7 @@ ext {
     siteUrl = 'https://github.com/zetbaitsu/Compressor'
     gitUrl = 'https://github.com/zetbaitsu/Compressor.git'
 
-    libraryVersion = '2.1.0'
+    libraryVersion = '3.0.0-beta'
 
     developerId = 'zetbaitsu'
     developerName = 'Zetra'
@@ -47,7 +47,7 @@ android {
         minSdkVersion 14
         targetSdkVersion 29
         versionCode 5
-        versionName "2.1.0"
+        versionName "3.0.0-beta"
     }
     buildTypes {
         release {
@@ -73,4 +73,8 @@ dependencies {
 
 repositories {
     mavenCentral()
+}
+
+tasks.withType(Javadoc).all {
+    enabled = false
 }

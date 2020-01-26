@@ -7,47 +7,73 @@ Compressor is a lightweight and powerful android image compression library. Comp
 # Gradle
 ```groovy
 dependencies {
-    implementation 'id.zelory:compressor:2.1.0'
+    implementation 'id.zelory:compressor:3.0.0'
 }
 ```
 # Let's compress the image size!
 #### Compress Image File
-```java
-compressedImageFile = new Compressor(this).compressToFile(actualImageFile);
+```kotlin
+val compressedImageFile = Compressor.compress(context, actualImageFile)
 ```
-#### Compress Image File to Bitmap
-```java
-compressedImageBitmap = new Compressor(this).compressToBitmap(actualImageFile);
+#### Compress Image File to specific destination
+```kotlin
+val compressedImageFile = Compressor.compress(context, actualImageFile) {
+    default()
+    destination(myFile)
+}
 ```
 ### I want custom Compressor!
-```java
-compressedImage = new Compressor(this)
-            .setMaxWidth(640)
-            .setMaxHeight(480)
-            .setQuality(75)
-            .setCompressFormat(Bitmap.CompressFormat.WEBP)
-            .setDestinationDirectoryPath(Environment.getExternalStoragePublicDirectory(
-              Environment.DIRECTORY_PICTURES).getAbsolutePath())
-            .compressToFile(actualImage);
+#### Using default constraint and custom partial of it
+```kotlin
+val compressedImageFile = Compressor.compress(context, actualImageFile) {
+    default(width = 640, format = Bitmap.CompressFormat.WEBP)
+}
 ```
-### Stay cool compress image asynchronously with RxJava!
-```java
-new Compressor(this)
-        .compressToFileAsFlowable(actualImage)
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(new Consumer<File>() {
-            @Override
-            public void accept(File file) {
-                compressedImage = file;
-            }
-        }, new Consumer<Throwable>() {
-            @Override
-            public void accept(Throwable throwable) {
-                throwable.printStackTrace();
-                showError(throwable.getMessage());
-            }
-        });
+#### Full custom constraint
+```kotlin
+val compressedImageFile = Compressor.compress(context, actualImageFile) {
+    resolution(1280, 720)
+    quality(80)
+    format(Bitmap.CompressFormat.WEBP)
+    size(2_097_152) // 2 MB
+}
+```
+#### Using your own custom constraint
+```kotlin
+class MyLowerCaseNameConstraint: Constraint {
+    override fun isSatisfied(imageFile: File): Boolean {
+        return imageFile.name.all { it.isLowerCase() }
+    }
+
+    override fun satisfy(imageFile: File): File {
+        val destination = File(imageFile.parent, imageFile.name.toLowerCase())
+        imageFile.renameTo(destination)
+        return destination
+    }
+}
+
+val compressedImageFile = Compressor.compress(context, actualImageFile) {
+    constraint(MyLowerCaseNameConstraint()) // your own constraint
+    quality(80) // combine with compressor constraint
+    format(Bitmap.CompressFormat.WEBP)
+}
+```
+### Compressor now is using Kotlin coroutines!
+#### Calling Compressor should be done from coroutines scope
+```kotlin
+// e.g calling from activity lifecycle scope
+lifecycleScope.launch {
+    val compressedImageFile = Compressor.compress(context, actualImageFile)
+}
+
+// calling from global scope
+GlobalScope.launch {
+    val compressedImageFile = Compressor.compress(context, actualImageFile)
+}
+```
+#### Run Compressor in main thread
+```kotlin
+val compressedImageFile = Compressor.compress(context, actualImageFile, Dispatchers.Main)
 ```
 
 License
