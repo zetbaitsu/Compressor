@@ -60,6 +60,19 @@ val compressedImageFile = Compressor.compress(context, actualImageFile) {
     format(Bitmap.CompressFormat.WEBP)
 }
 ```
+#### You can create your own extension too
+```kotlin
+fun Compression.lowerCaseName() {
+    constraint(MyLowerCaseNameConstraint())
+}
+
+val compressedImageFile = Compressor.compress(context, actualImageFile) {
+    lowerCaseName() // your own extension
+    quality(80) // combine with compressor constraint
+    format(Bitmap.CompressFormat.WEBP)
+}
+```
+
 ### Compressor now is using Kotlin coroutines!
 #### Calling Compressor should be done from coroutines scope
 ```kotlin
