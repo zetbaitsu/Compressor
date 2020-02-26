@@ -4,6 +4,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
@@ -45,6 +46,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private var actualImage: File? = null
+    private var actualImageUri: Uri? = null
     private var compressedImage: File? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,7 +70,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun compressImage() {
-        actualImage?.let { imageFile ->
+        actualImageUri?.let { imageFile ->
             lifecycleScope.launch {
                 // Default compression
                 compressedImage = Compressor.compress(this@MainActivity, imageFile)
@@ -125,6 +127,7 @@ class MainActivity : AppCompatActivity() {
                 return
             }
             try {
+                actualImageUri = data.data
                 actualImage = FileUtil.from(this, data.data)?.also {
                     actualImageView.setImageBitmap(loadBitmap(it))
                     actualSizeTextView.text = String.format("Size : %s", getReadableFileSize(it.length()))
