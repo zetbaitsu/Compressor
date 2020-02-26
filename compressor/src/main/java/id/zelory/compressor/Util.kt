@@ -1,12 +1,16 @@
 package id.zelory.compressor
 
+import android.content.ContentResolver
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.media.ExifInterface
+import android.net.Uri
+import android.provider.OpenableColumns
 import java.io.File
 import java.io.FileOutputStream
+import java.net.URISyntaxException
 
 /**
  * Created on : January 24, 2020
@@ -80,6 +84,31 @@ fun determineImageRotation(imageFile: File, bitmap: Bitmap): Bitmap {
 
 internal fun copyToCache(context: Context, imageFile: File): File {
     return imageFile.copyTo(File("${cachePath(context)}${imageFile.name}"), true)
+}
+
+internal fun copyToCache(context: Context, imageUri: Uri): File {
+    val fileName = when (imageUri.scheme) {
+        ContentResolver.SCHEME_FILE -> File(requireNotNull(imageUri.path) { "Uri path is null: ${imageUri.path}" }).name
+        ContentResolver.SCHEME_CONTENT -> {
+            context.contentResolver.query(imageUri, null, null, null, null)
+                    ?.use { cursor ->
+                        val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                        cursor.moveToFirst()
+                        cursor.getString(nameIndex)
+                    } ?: throw NoSuchFieldException("File not found: $imageUri")
+        }
+        else -> throw IllegalArgumentException("Uri scheme not support: ${imageUri.scheme}")
+    }
+    val target = File("${cachePath(context)}${fileName}").apply { mkdirs() }
+    if (target.exists() && !target.delete()) {
+        throw FileAlreadyExistsException(file = target, reason = "Tried to overwrite the destination, but failed to delete it.")
+    }
+    context.contentResolver.openInputStream(imageUri)!!.use { input ->
+        target.outputStream().use { output ->
+            input.copyTo(output)
+        }
+    }
+    return target
 }
 
 fun overWrite(imageFile: File, bitmap: Bitmap, format: Bitmap.CompressFormat = imageFile.compressFormat(), quality: Int = 100): File {
