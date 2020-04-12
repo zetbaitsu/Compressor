@@ -91,6 +91,35 @@ GlobalScope.launch {
 val compressedImageFile = Compressor.compress(context, actualImageFile, Dispatchers.Main)
 ```
 
+### Compressor with a friendly api using ImageCompressor  
+```kotlin  
+ImageCompressor.with(context)  
+ .launchOn(Dispatchers.IO) // set a CoroutineContext (Optional, default = Dispatchers.IO)
+ .observeOn(lifecycleScope) // set a CoroutineScope
+ .applyCompressionWith { // options 
+    resolution(1280, 720) 
+    format(Bitmap.CompressFormat.WEBP) 
+    ... 
+ }.compress(inputImg) { outputImage -> 
+    // get output image here 
+ }
+```  
+Logging exceptions too:  
+```kotlin  
+ImageCompressor.with(context)  
+ .launchOn(coroutineContext)
+ .observeOn(coroutineScope)  
+ .applyCompressionWith { ... }
+ .compress(inputImg,        
+    onFailure = { throwable ->  
+        // log exception here 
+    }, 
+    onSuccess = { outputImage -> 
+        // get output image here 
+    } 
+)
+```
+
 ### Old version
 Please read this [readme](https://github.com/zetbaitsu/Compressor/blob/master/README_v2.md)
 

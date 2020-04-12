@@ -5,26 +5,18 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Bundle
-import android.os.Environment
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import id.zelory.compressor.Compressor
-import id.zelory.compressor.constraint.default
-import id.zelory.compressor.constraint.destination
+import id.zelory.compressor.ImageCompressor
 import id.zelory.compressor.constraint.format
 import id.zelory.compressor.constraint.quality
 import id.zelory.compressor.constraint.resolution
 import id.zelory.compressor.constraint.size
 import id.zelory.compressor.loadBitmap
-import kotlinx.android.synthetic.main.activity_main.actualImageView
-import kotlinx.android.synthetic.main.activity_main.actualSizeTextView
-import kotlinx.android.synthetic.main.activity_main.chooseImageButton
-import kotlinx.android.synthetic.main.activity_main.compressImageButton
-import kotlinx.android.synthetic.main.activity_main.compressedImageView
-import kotlinx.android.synthetic.main.activity_main.compressedSizeTextView
-import kotlinx.android.synthetic.main.activity_main.customCompressImageButton
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.IOException
@@ -69,35 +61,47 @@ class MainActivity : AppCompatActivity() {
 
     private fun compressImage() {
         actualImage?.let { imageFile ->
-            lifecycleScope.launch {
-                // Default compression
-                compressedImage = Compressor.compress(this@MainActivity, imageFile)
-                setCompressedImage()
-            }
+            // Default compression
+            ImageCompressor.with(this)
+                    .observeOn(lifecycleScope)
+                    .compress(imageFile) {
+                        compressedImage = it
+                        setCompressedImage()
+                    }
         } ?: showError("Please choose an image!")
     }
 
     private fun customCompressImage() {
         actualImage?.let { imageFile ->
-            lifecycleScope.launch {
-                // Default compression with custom destination file
-                /*compressedImage = Compressor.compress(this@MainActivity, imageFile) {
-                    default()
-                    getExternalFilesDir(Environment.DIRECTORY_PICTURES)?.also {
-                        val file = File("${it.absolutePath}${File.separator}my_image.${imageFile.extension}")
-                        destination(file)
-                    }
-                }*/
 
-                // Full custom
-                compressedImage = Compressor.compress(this@MainActivity, imageFile) {
-                    resolution(1280, 720)
-                    quality(80)
-                    format(Bitmap.CompressFormat.WEBP)
-                    size(2_097_152) // 2 MB
-                }
-                setCompressedImage()
+            /* Default compression with custom destination file
+            val destinationFile = getExternalFilesDir(Environment.DIRECTORY_PICTURES)?.run {
+                File("${absolutePath}${File.separator}my_image.${imageFile.extension}")
             }
+            ImageCompressor.with(this@MainActivity)
+                    .launchOn(Dispatchers.IO)
+                    .observeOn(lifecycleScope)
+                    .applyCompressionWith {
+                        ...
+                    }.saveOn(destinationFile)
+                    .compress(imageFile) { outputImage ->
+                        ...
+                    }
+            */
+
+            // Full custom
+            ImageCompressor.with(this@MainActivity)
+                    .launchOn(Dispatchers.IO)
+                    .observeOn(lifecycleScope)
+                    .applyCompressionWith {
+                        resolution(1280, 720)
+                        quality(80)
+                        format(Bitmap.CompressFormat.WEBP)
+                        size(2_097_152) // 2 MB
+                    }.compress(imageFile) { outputImage ->
+                        compressedImage = outputImage
+                        setCompressedImage()
+                    }
         } ?: showError("Please choose an image!")
     }
 
