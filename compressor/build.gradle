@@ -18,6 +18,7 @@ buildscript {
 ext {
     bintrayRepo = 'maven'
     bintrayName = 'compressor'
+    group = 'com.github.shobhitgupta1245'
 
     publishedGroupId = 'id.zelory'
     libraryName = 'Compressor'
@@ -28,7 +29,7 @@ ext {
     siteUrl = 'https://github.com/zetbaitsu/Compressor'
     gitUrl = 'https://github.com/zetbaitsu/Compressor.git'
 
-    libraryVersion = '3.0.0'
+    libraryVersion = '3.0.1'
 
     developerId = 'zetbaitsu'
     developerName = 'Zetra'
@@ -47,7 +48,7 @@ android {
         minSdkVersion 14
         targetSdkVersion 29
         versionCode 5
-        versionName "3.0.0"
+        versionName "3.0.1"
     }
     buildTypes {
         release {
