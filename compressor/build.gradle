@@ -3,6 +3,8 @@ apply plugin: 'kotlin-android'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'jacoco-android'
 
+group = 'com.github.shrastiRisor'
+
 buildscript {
     repositories {
         mavenCentral()
