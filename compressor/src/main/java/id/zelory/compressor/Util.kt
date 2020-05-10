@@ -98,7 +98,7 @@ fun copyToCache(context: Context, srcFileUri: Uri): File {
     val fd = context.contentResolver.openFileDescriptor(srcFileUri, "r")
     val inputStream = ParcelFileDescriptor.AutoCloseInputStream(fd)
     val outputStream = FileOutputStream(cacheFile)
-    fd.use {
+    inputStream.use {
         outputStream.use {
             inputStream.copyTo(outputStream)
         }
