@@ -12,6 +12,9 @@ import android.provider.OpenableColumns
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 /**
  * Created on : January 24, 2020
@@ -107,13 +110,33 @@ fun copyToCache(context: Context, srcFileUri: Uri): File {
 }
 
 fun getFileName(context: Context, uri: Uri) : String {
-    val cursor: Cursor = context.contentResolver.query(
-            uri, arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null
-    ) ?: throw FileNotFoundException()
-
-    val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-    cursor.moveToFirst()
-    return cursor.getString(nameIndex)
+    val resolver = context.contentResolver
+    val cursor = resolver.query(
+            uri, arrayOf(OpenableColumns.DISPLAY_NAME
+    ), null, null, null
+    )
+    cursor.use {
+        val nameIndex = it!!.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+        if (it.moveToFirst()) {
+            return it.getString(nameIndex)
+        } else {
+            val prefix = "IMG_" + SimpleDateFormat(
+                    "yyyyMMdd_",
+                    Locale.getDefault()
+            ).format(Date()) + System.nanoTime()
+            return when (val fileMimeType = resolver.getType(fileUri)) {
+                "image/jpg", "image/jpeg" -> {
+                    "$prefix.jpeg"
+                }
+                "image/png" -> {
+                    "$prefix.png"
+                }
+                else -> {
+                    throw IllegalStateException("$fileMimeType fallback display name not supported")
+                }
+            }
+        }
+    }
 }
 
 fun overWrite(imageFile: File, bitmap: Bitmap, format: Bitmap.CompressFormat = imageFile.compressFormat(), quality: Int = 100): File {
