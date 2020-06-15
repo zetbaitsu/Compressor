@@ -1,12 +1,20 @@
 package id.zelory.compressor
 
 import android.content.Context
+import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.media.ExifInterface
+import android.net.Uri
+import android.os.ParcelFileDescriptor
+import android.provider.OpenableColumns
 import java.io.File
+import java.io.FileNotFoundException
 import java.io.FileOutputStream
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 /**
  * Created on : January 24, 2020
@@ -80,6 +88,55 @@ fun determineImageRotation(imageFile: File, bitmap: Bitmap): Bitmap {
 
 internal fun copyToCache(context: Context, imageFile: File): File {
     return imageFile.copyTo(File("${cachePath(context)}${imageFile.name}"), true)
+}
+
+fun copyToCache(context: Context, srcFileUri: Uri): File {
+    val cacheFile = File("${cachePath(context)}${getFileName(context, srcFileUri)}")
+    cacheFile.parentFile.mkdirs()
+    if (cacheFile.exists()) {
+        cacheFile.delete()
+    }
+    cacheFile.createNewFile()
+    cacheFile.deleteOnExit()
+    val fd = context.contentResolver.openFileDescriptor(srcFileUri, "r")
+    val inputStream = ParcelFileDescriptor.AutoCloseInputStream(fd)
+    val outputStream = FileOutputStream(cacheFile)
+    inputStream.use {
+        outputStream.use {
+            inputStream.copyTo(outputStream)
+        }
+    }
+    return cacheFile
+}
+
+fun getFileName(context: Context, uri: Uri) : String {
+    val resolver = context.contentResolver
+    val cursor = resolver.query(
+            uri, arrayOf(OpenableColumns.DISPLAY_NAME
+    ), null, null, null
+    )
+    cursor.use {
+        val nameIndex = it!!.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+        if (it.moveToFirst()) {
+            return it.getString(nameIndex)
+        } else {
+            val prefix = "IMG_" + SimpleDateFormat(
+                    "yyyyMMdd_",
+                    Locale.getDefault()
+            ).format(Date()) + System.nanoTime()
+            return when (val fileMimeType = resolver.getType(uri)) {
+                "image/jpg", "image/jpeg" -> {
+                    "$prefix.jpeg"
+                }
+                "image/png" -> {
+                    "$prefix.png"
+                }
+                else -> {
+                    throw IllegalStateException("$fileMimeType fallback display name not supported")
+                }
+            }
+        }
+    }
 }
 
 fun overWrite(imageFile: File, bitmap: Bitmap, format: Bitmap.CompressFormat = imageFile.compressFormat(), quality: Int = 100): File {
