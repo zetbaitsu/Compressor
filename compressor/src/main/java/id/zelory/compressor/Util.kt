@@ -124,7 +124,7 @@ fun getFileName(context: Context, uri: Uri) : String {
                     "yyyyMMdd_",
                     Locale.getDefault()
             ).format(Date()) + System.nanoTime()
-            return when (val fileMimeType = resolver.getType(fileUri)) {
+            return when (val fileMimeType = resolver.getType(uri)) {
                 "image/jpg", "image/jpeg" -> {
                     "$prefix.jpeg"
                 }
