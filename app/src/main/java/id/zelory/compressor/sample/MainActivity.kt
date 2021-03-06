@@ -1,5 +1,6 @@
 package id.zelory.compressor.sample
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -11,12 +12,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import id.zelory.compressor.Compressor
-import id.zelory.compressor.constraint.default
-import id.zelory.compressor.constraint.destination
-import id.zelory.compressor.constraint.format
-import id.zelory.compressor.constraint.quality
-import id.zelory.compressor.constraint.resolution
-import id.zelory.compressor.constraint.size
+import id.zelory.compressor.constraint.*
 import id.zelory.compressor.loadBitmap
 import kotlinx.android.synthetic.main.activity_main.actualImageView
 import kotlinx.android.synthetic.main.activity_main.actualSizeTextView
@@ -77,6 +73,9 @@ class MainActivity : AppCompatActivity() {
         } ?: showError("Please choose an image!")
     }
 
+    private val separator = File.separator
+    private fun cachePath(context: Context) = "${context.cacheDir.path}${separator}compressor$separator"
+
     private fun customCompressImage() {
         actualImage?.let { imageFile ->
             lifecycleScope.launch {
@@ -90,11 +89,14 @@ class MainActivity : AppCompatActivity() {
                 }*/
 
                 // Full custom
+                val destFile = File("${cachePath(this@MainActivity)}compressed_${imageFile.name}")
                 compressedImage = Compressor.compress(this@MainActivity, imageFile) {
-                    resolution(1280, 720)
-                    quality(80)
+//                    destination(destFile)
+                    resolution(2000, 2000)
                     format(Bitmap.CompressFormat.WEBP)
-                    size(2_097_152) // 2 MB
+                    quality(100)
+                    size(2_000_000) // 5M
+//                    size(2_097_152) // 2 MB
                 }
                 setCompressedImage()
             }

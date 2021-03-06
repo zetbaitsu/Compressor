@@ -16,6 +16,8 @@ class DestinationConstraint(private val destination: File) : Constraint {
     override fun satisfy(imageFile: File): File {
         return imageFile.copyTo(destination, true)
     }
+
+    fun getDestination(): File = destination
 }
 
 fun Compression.destination(destination: File) {

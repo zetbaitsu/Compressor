@@ -33,6 +33,14 @@ class DefaultConstraint(
         isResolved = true
         return result
     }
+
+    fun getWidth(): Int = width
+
+    fun getHeight(): Int = height
+
+    fun getFormat(): Bitmap.CompressFormat = format
+
+    fun getQuality(): Int = quality
 }
 
 fun Compression.default(

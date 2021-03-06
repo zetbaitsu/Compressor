@@ -22,6 +22,8 @@ class QualityConstraint(private val quality: Int) : Constraint {
         isResolved = true
         return result
     }
+
+    fun getQuality(): Int = quality
 }
 
 fun Compression.quality(quality: Int) {

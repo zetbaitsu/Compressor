@@ -46,6 +46,14 @@ fun decodeSampledBitmapFromFile(imageFile: File, reqWidth: Int, reqHeight: Int):
     }
 }
 
+fun getImageDimension(imageFile: File): IntArray {
+    return BitmapFactory.Options().run {
+        inJustDecodeBounds = true
+        BitmapFactory.decodeFile(imageFile.absolutePath, this)
+        intArrayOf(outWidth, outHeight)
+    }
+}
+
 fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
     // Raw height and width of image
     val (height: Int, width: Int) = options.run { outHeight to outWidth }
@@ -78,8 +86,8 @@ fun determineImageRotation(imageFile: File, bitmap: Bitmap): Bitmap {
     return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
 }
 
-internal fun copyToCache(context: Context, imageFile: File): File {
-    return imageFile.copyTo(File("${cachePath(context)}${imageFile.name}"), true)
+internal fun copyToCache(context: Context, imageFile: File, targetFile: File? = null): File {
+    return imageFile.copyTo(targetFile ?: File("${cachePath(context)}${imageFile.name}"), true)
 }
 
 fun overWrite(imageFile: File, bitmap: Bitmap, format: Bitmap.CompressFormat = imageFile.compressFormat(), quality: Int = 100): File {
