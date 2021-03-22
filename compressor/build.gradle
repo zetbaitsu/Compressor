@@ -3,7 +3,7 @@ apply plugin: 'com.github.dcendents.android-maven'
 
 ext {
     PUBLISH_GROUP_ID = 'id.zelory'
-    PUBLISH_VERSION = '2.1.0'
+    PUBLISH_VERSION = '2.1.1'
     PUBLISH_ARTIFACT_ID = 'compressor'
 }
 
@@ -29,7 +29,6 @@ android {
 
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
     testImplementation 'junit:junit:4.12'
     implementation "io.reactivex.rxjava2:rxjava:2.1.0"
 }

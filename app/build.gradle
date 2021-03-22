@@ -23,7 +23,7 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     testImplementation 'junit:junit:4.12'
     implementation 'androidx.appcompat:appcompat:1.1.0'
-    //implementation 'id.zelory:compressor:2.1.0'
-    implementation project(':compressor')
+    implementation 'id.zelory:compressor:2.1.1'
+    //implementation project(':compressor')
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
 }
