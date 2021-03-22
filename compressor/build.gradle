@@ -5,7 +5,7 @@ apply plugin: 'jacoco-android'
 
 ext {
     PUBLISH_GROUP_ID = 'id.zelory'
-    PUBLISH_VERSION = '3.0.0'
+    PUBLISH_VERSION = '3.0.1'
     PUBLISH_ARTIFACT_ID = 'compressor'
 }
 
@@ -31,7 +31,6 @@ android {
 
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_coroutines_version"
 
