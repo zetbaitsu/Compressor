@@ -14,6 +14,9 @@ class DestinationConstraint(private val destination: File) : Constraint {
     }
 
     override fun satisfy(imageFile: File): File {
+        if (!destination.exists()) {
+            destination.createNewFile()
+        }
         return imageFile.copyTo(destination, true)
     }
 }
