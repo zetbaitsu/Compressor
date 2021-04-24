@@ -30,6 +30,10 @@ class ResolutionConstraint(private val width: Int, private val height: Int) : Co
             }
         }
     }
+
+    fun getWidth(): Int = width
+
+    fun getHeight(): Int = height
 }
 
 fun Compression.resolution(width: Int, height: Int) {

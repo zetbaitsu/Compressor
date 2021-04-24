@@ -21,6 +21,8 @@ class FormatConstraint(private val format: Bitmap.CompressFormat) : Constraint {
     override fun satisfy(imageFile: File): File {
         return overWrite(imageFile, loadBitmap(imageFile), format)
     }
+
+    fun getFormat(): Bitmap.CompressFormat = format
 }
 
 fun Compression.format(format: Bitmap.CompressFormat) {
