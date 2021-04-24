@@ -38,6 +38,7 @@ import kotlin.math.pow
 class MainActivity : AppCompatActivity() {
     companion object {
         private const val PICK_IMAGE_REQUEST = 1
+        private const val TAG = "MainActivity"
     }
 
     private var actualImage: File? = null
@@ -90,6 +91,7 @@ class MainActivity : AppCompatActivity() {
 
                 // Full custom
                 val destFile = File("${cachePath(this@MainActivity)}compressed_${imageFile.name}")
+                val start = System.currentTimeMillis()
                 compressedImage = Compressor.compress(this@MainActivity, imageFile) {
 //                    destination(destFile)
                     resolution(2000, 2000)
@@ -98,6 +100,8 @@ class MainActivity : AppCompatActivity() {
                     size(2_000_000) // 5M
 //                    size(2_097_152) // 2 MB
                 }
+                val end = System.currentTimeMillis()
+                Log.d(TAG, "compress cost: ${end - start}ms")
                 setCompressedImage()
             }
         } ?: showError("Please choose an image!")

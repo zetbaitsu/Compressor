@@ -9,7 +9,7 @@ Compressor is a lightweight and powerful android image compression library. Comp
 # Gradle
 ```groovy
 dependencies {
-    implementation 'id.zelory:compressor:3.0.0'
+    implementation 'id.zelory:compressor:3.0.1'
 }
 ```
 # Let's compress the image size!
