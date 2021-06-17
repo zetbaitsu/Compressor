@@ -30,4 +30,19 @@ object Compressor {
         }
         return@withContext result
     }
+
+    fun compress(
+            context: Context,
+            imageFile: File,
+            compressionPatch: Compression.() -> Unit
+    ): File {
+        val compression = Compression().apply(compressionPatch)
+        var result = copyToCache(context, imageFile)
+        compression.constraints.forEach { constraint ->
+            while (constraint.isSatisfied(result).not()) {
+                result = constraint.satisfy(result)
+            }
+        }
+        return result
+    }
 }
