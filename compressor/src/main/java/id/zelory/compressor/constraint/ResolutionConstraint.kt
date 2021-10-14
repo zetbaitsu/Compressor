@@ -19,7 +19,7 @@ class ResolutionConstraint(private val width: Int, private val height: Int) : Co
         return BitmapFactory.Options().run {
             inJustDecodeBounds = true
             BitmapFactory.decodeFile(imageFile.absolutePath, this)
-            calculateInSampleSize(this, width, height) <= 1
+            outWidth.coerceAtMost(outHeight) <= width.coerceAtMost(height)
         }
     }
 
