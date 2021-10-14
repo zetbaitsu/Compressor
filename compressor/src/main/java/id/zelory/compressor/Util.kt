@@ -38,10 +38,17 @@ fun decodeSampledBitmapFromFile(imageFile: File, reqWidth: Int, reqHeight: Int):
     return BitmapFactory.Options().run {
         inJustDecodeBounds = true
         BitmapFactory.decodeFile(imageFile.absolutePath, this)
-
         inSampleSize = calculateInSampleSize(this, reqWidth, reqHeight)
-
         inJustDecodeBounds = false
+        val outRatio = outWidth.toFloat() / outHeight.toFloat()
+        val reqRatio = reqWidth.toFloat() / reqHeight.toFloat()
+        if (outRatio > reqRatio) {
+            inDensity = outHeight
+            inTargetDensity = reqHeight * inSampleSize
+        } else if (outRatio <= reqRatio) {
+            inDensity = outWidth
+            inTargetDensity = reqWidth * inSampleSize
+        }
         BitmapFactory.decodeFile(imageFile.absolutePath, this)
     }
 }
