@@ -1,7 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'com.github.dcendents.android-maven'
-apply plugin: 'jacoco-android'
+apply plugin: 'com.dicedmelon.gradle.jacoco-android'
 
 ext {
     PUBLISH_GROUP_ID = 'id.zelory'
