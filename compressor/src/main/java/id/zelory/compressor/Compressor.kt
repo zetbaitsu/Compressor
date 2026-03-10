@@ -15,7 +15,7 @@ import kotlin.coroutines.CoroutineContext
  * GitHub     : https://github.com/zetbaitsu
  */
 object Compressor {
-    suspend fun compress(
+    fun compress(
             context: Context,
             imageFile: File,
             coroutineContext: CoroutineContext = Dispatchers.IO,
