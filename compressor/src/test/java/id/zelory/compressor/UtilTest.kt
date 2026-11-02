@@ -205,4 +205,21 @@ class UtilTest {
         // Then
         assertThat(result.extension, equalTo("png"))
     }
+
+    @Test
+    fun `overwrite without an extension should preserve the original parent directory`() {
+        // Given
+        mockkStatic("id.zelory.compressor.UtilKt")
+        every { saveBitmap(any(), any(), any(), any()) } just Runs
+
+        val imageFile = File("folder.with.dots/image")
+        val bitmap = mockk<Bitmap>(relaxed = true)
+
+        // When
+        val result = overWrite(imageFile, bitmap, Bitmap.CompressFormat.PNG)
+
+        // Then
+        assertThat(result, equalTo(File("folder.with.dots/image.png")))
+        assertThat(result.parentFile, equalTo(imageFile.parentFile))
+    }
 }
