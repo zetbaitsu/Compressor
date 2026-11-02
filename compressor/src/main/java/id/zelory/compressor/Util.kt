@@ -93,7 +93,7 @@ fun overWrite(imageFile: File, bitmap: Bitmap, format: Bitmap.CompressFormat = i
     val result = if (format == imageFile.compressFormat()) {
         imageFile
     } else {
-        File("${imageFile.absolutePath.substringBeforeLast(".")}.${format.extension()}")
+        File(imageFile.parentFile, "${imageFile.nameWithoutExtension}.${format.extension()}")
     }
     imageFile.delete()
     saveBitmap(bitmap, result, format, quality)
