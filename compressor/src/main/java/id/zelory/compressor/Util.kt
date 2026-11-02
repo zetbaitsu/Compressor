@@ -7,6 +7,7 @@ import android.graphics.Matrix
 import android.media.ExifInterface
 import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
 
 /**
  * Created on : January 24, 2020
@@ -38,6 +39,9 @@ fun decodeSampledBitmapFromFile(imageFile: File, reqWidth: Int, reqHeight: Int):
     return BitmapFactory.Options().run {
         inJustDecodeBounds = true
         BitmapFactory.decodeFile(imageFile.absolutePath, this)
+        if (outWidth <= 0 || outHeight <= 0) {
+            throw IOException("Unable to decode image file: ${imageFile.absolutePath}")
+        }
         inSampleSize = calculateInSampleSize(this, reqWidth, reqHeight)
         inJustDecodeBounds = false
         val outRatio = outWidth.toFloat() / outHeight.toFloat()
@@ -50,6 +54,7 @@ fun decodeSampledBitmapFromFile(imageFile: File, reqWidth: Int, reqHeight: Int):
             inTargetDensity = reqWidth * inSampleSize
         }
         BitmapFactory.decodeFile(imageFile.absolutePath, this)
+            ?: throw IOException("Unable to decode image file: ${imageFile.absolutePath}")
     }
 }
 
