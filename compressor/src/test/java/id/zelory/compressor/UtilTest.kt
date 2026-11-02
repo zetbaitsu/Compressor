@@ -15,6 +15,7 @@ import io.mockk.verify
 import org.junit.After
 import org.junit.Test
 import java.io.File
+import java.io.IOException
 
 /**
  * Created on : January 25, 2020
@@ -63,7 +64,13 @@ class UtilTest {
     fun `decode sampled bitmap should decode with subsampling`() {
         // Given
         mockkStatic(BitmapFactory::class)
-        every { BitmapFactory.decodeFile(any(), any()) } returns mockk()
+        every { BitmapFactory.decodeFile(any(), any()) } answers {
+            secondArg<BitmapFactory.Options>().apply {
+                outWidth = 800
+                outHeight = 800
+            }
+            mockk()
+        }
         mockkStatic("id.zelory.compressor.UtilKt")
         val inSampleSize = 2
         every { calculateInSampleSize(any(), any(), any()) } returns inSampleSize
@@ -77,6 +84,35 @@ class UtilTest {
                 it.inSampleSize == inSampleSize
             })
         }
+    }
+
+    @Test(expected = IOException::class)
+    fun `decode sampled bitmap should reject invalid image bounds`() {
+        mockkStatic(BitmapFactory::class)
+        every { BitmapFactory.decodeFile(any(), any()) } answers {
+            secondArg<BitmapFactory.Options>().apply {
+                outWidth = -1
+                outHeight = -1
+            }
+            null
+        }
+
+        decodeSampledBitmapFromFile(File("invalid-image.jpg"), 100, 100)
+    }
+
+    @Test(expected = IOException::class)
+    fun `decode sampled bitmap should reject null decoded bitmap`() {
+        mockkStatic(BitmapFactory::class)
+        every { BitmapFactory.decodeFile(any(), any()) } answers {
+            val options = secondArg<BitmapFactory.Options>()
+            if (options.inJustDecodeBounds) {
+                options.outWidth = 800
+                options.outHeight = 600
+            }
+            null
+        }
+
+        decodeSampledBitmapFromFile(File("corrupt-image.jpg"), 100, 100)
     }
 
     @Test
